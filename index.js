@@ -1,17 +1,17 @@
 #!/home/ubuntu/.nodebrew/current/bin/node
-let fs = require("fs")
-var util = require('util')
-var twitter = require('twitter')
-var readline = require("readline").createInterface({
+const fs = require("fs");
+const util = require("util");
+const twitter = require("twitter");
+const readline = require("readline").createInterface({
 	input: process.stdin,
 	output: process.stdout
 });
 
-let key = fs.readFileSync("key.txt","utf8")
-if(key===""){
+let key = fs.readFileSync("key.txt", "utf8");
+if (key === "") {
 	console.log("https://apps.twitter.com/ からapi-keyを取得し,keyset.jsを使用してキーを登録してください。");
 	process.exit();
-}else{
+} else {
 	key = key.split(",");
 	key = new twitter({
 		consumer_key: key[0],
@@ -24,15 +24,15 @@ if(key===""){
 
 
 //文字色
-var black = '\u001b[30m';
-var red = '\u001b[31m';
-var green = '\u001b[32m';
-var yellow = '\u001b[33m';
-var blue = '\u001b[34m';
-var magenta = '\u001b[35m';
-var cyan = '\u001b[36m';
-var white = '\u001b[37m';
-var reset = '\u001b[0m';
+const black = '\u001b[30m';
+const red = '\u001b[31m';
+const green = '\u001b[32m';
+const yellow = '\u001b[33m';
+const blue = '\u001b[34m';
+const magenta = '\u001b[35m';
+const cyan = '\u001b[36m';
+const white = '\u001b[37m';
+const reset = '\u001b[0m';
 //記憶域
 let twinum = -1;
 let twiid = [];
@@ -41,7 +41,7 @@ let scname = [];
 let replynum = "";
 let mode = undefined;
 
-var shell = [];
+let shell = [];
 shell = process.argv;
 switch (shell[2]) {
 	case "h":
@@ -50,18 +50,18 @@ switch (shell[2]) {
 		break;
 	case "tl":
 		//TLを流す
-		console.log(green + " #    #  " + cyan + "######  " + yellow + "#       " + red + " ####   " + white + " ####   " + magenta + "#    #  " + blue + "######" + reset)
-		console.log(green + " #    #  " + cyan + "#       " + yellow + "#       " + red + "#    #  " + white + "#    #  " + magenta + "##  ##  " + blue + "#     " + reset)
-		console.log(green + " #    #  " + cyan + "#####   " + yellow + "#       " + red + "#       " + white + "#    #  " + magenta + "# ## #  " + blue + "##### " + reset)
-		console.log(green + " # ## #  " + cyan + "#       " + yellow + "#       " + red + "#       " + white + "#    #  " + magenta + "#    #  " + blue + "#     " + reset)
-		console.log(green + " ##  ##  " + cyan + "#       " + yellow + "#       " + red + "#    #  " + white + "#    #  " + magenta + "#    #  " + blue + "#     " + reset)
-		console.log(green + " #    #  " + cyan + "######  " + yellow + "######  " + red + " ####   " + white + " ####   " + magenta + "#    #  " + blue + "######" + reset)
+		console.log(green + " #    #  " + cyan + "######  " + yellow + "#       " + red + " ####   " + white + " ####   " + magenta + "#    #  " + blue + "######" + reset);
+		console.log(green + " #    #  " + cyan + "#       " + yellow + "#       " + red + "#    #  " + white + "#    #  " + magenta + "##  ##  " + blue + "#     " + reset);
+		console.log(green + " #    #  " + cyan + "#####   " + yellow + "#       " + red + "#       " + white + "#    #  " + magenta + "# ## #  " + blue + "##### " + reset);
+		console.log(green + " # ## #  " + cyan + "#       " + yellow + "#       " + red + "#       " + white + "#    #  " + magenta + "#    #  " + blue + "#     " + reset);
+		console.log(green + " ##  ##  " + cyan + "#       " + yellow + "#       " + red + "#    #  " + white + "#    #  " + magenta + "#    #  " + blue + "#     " + reset);
+		console.log(green + " #    #  " + cyan + "######  " + yellow + "######  " + red + " ####   " + white + " ####   " + magenta + "#    #  " + blue + "######" + reset);
 		console.log("\r\ntimeline mode\r\n");
 
 		key.stream('user', function (stream) {
 			stream.on("data", function (data) {
 
-				var tmp = data.source;
+				let tmp = data.source;
 				tmp = tmp.split('">');
 				tmp = tmp[1].split('</a>');
 
@@ -70,11 +70,11 @@ switch (shell[2]) {
 				twitxt.push(data.text);
 				scname.push(data.user.screen_name);
 
-				var temp = "No." + twinum + "\r\n"
-				temp += magenta + data.user.name + " @" + data.user.screen_name + "\r\n"
-				temp += white + data.text + "\r\n"
-				temp += blue + "via " + tmp + "\r\n"
-				temp += data.user.created_at + reset + "\r\n"
+				let temp = "No." + twinum + "\r\n";
+				temp += magenta + data.user.name + " @" + data.user.screen_name + "\r\n";
+				temp += white + data.text + "\r\n";
+				temp += blue + "via " + tmp + "\r\n";
+				temp += data.user.created_at + reset + "\r\n";
 
 				console.log(temp);
 			})
@@ -85,22 +85,22 @@ switch (shell[2]) {
 
 			switch (mode) {
 				case "replynum":
-					mode = "replymsg"
+					mode = "replymsg";
 					replynum = line;
 					console.log("repry msg?");
 					break;
 
 				case "replymsg":
-					mode = undefined
+					mode = undefined;
 					console.log(cyan + "send...")
 					key.post('statuses/update',
 						{ status: "@" + scname[replynum] + " " + line, in_reply_to_status_id: twiid[replynum] },
 						function (error, tweet, response) {
 							if (!error) {
-								//console.log(tweet)
-								console.log(green + "tweet success\r\n" + reset)
+								//console.log(tweet);
+								console.log(green + "tweet success\r\n" + reset);
 							} else {
-								console.log(red + "tweet error\r\n" + reset)
+								console.log(red + "tweet error\r\n" + reset);
 							};
 							replyid = "";
 						}
@@ -108,7 +108,7 @@ switch (shell[2]) {
 					break;
 				case "rt":
 					//RT
-					mode = undefined
+					mode = undefined;
 					key.post('statuses/retweet/' + twiid[line] + '.json',
 						function (error) {
 							if (!error) {
@@ -120,7 +120,7 @@ switch (shell[2]) {
 					break;
 				case "fav":
 					//ふぁぼ
-					mode = undefined
+					mode = undefined;
 					key.post('favorites/create.json?id=' + twiid[line] + "&include_entities=true",
 						function (error) {
 							if (!error) {
@@ -132,16 +132,16 @@ switch (shell[2]) {
 					break;
 				case "copy":
 					//パクツイ
-					mode = ""
-					console.log(cyan + "send...")
+					mode = "";
+					console.log(cyan + "send...");
 					key.post('statuses/update',
 						{ status: twitxt[line] },
 						function (error, tweet, response) {
 							if (!error) {
-								//console.log(tweet)
-								console.log(green + "tweet success\r\n" + reset)
+								//console.log(tweet);
+								console.log(green + "tweet success\r\n" + reset);
 							} else {
-								console.log(red + "tweet error\r\n" + reset)
+								console.log(red + "tweet error\r\n" + reset);
 							};
 						}
 					);
@@ -150,7 +150,7 @@ switch (shell[2]) {
 					switch (line) {
 						case "h":
 							if (mode === undefined) {
-								console.log(" r=retweet \r\n f=Favorite \r\n c=copy \r\n m=reply(message)")
+								console.log(" r=retweet \r\n f=Favorite \r\n c=copy \r\n m=reply(message)");
 							} else {
 								console.log("Number=No,*");
 							};
@@ -177,7 +177,7 @@ switch (shell[2]) {
 								{ status: line },
 								function (error, tweet, response) {
 									if (!error) {
-										//console.log(tweet)
+										//console.log(tweet);
 										console.log(green + "tweet success\r\n" + reset);
 									} else {
 										console.log(red + "tweet error\r\n" + reset);
@@ -193,16 +193,16 @@ switch (shell[2]) {
 		break;
 	default:
 		//ツイート後即終了
-		console.log(cyan + 'send...' + reset)
+		console.log(cyan + 'send...' + reset);
 		key.post('statuses/update',
 			{ status: shell[2] },
 			function (error, tweet, response) {
 				if (!error) {
-					//console.log(tweet)
-					console.log(green + "success" + reset)
+					//console.log(tweet);
+					console.log(green + "success" + reset);
 				} else {
-					console.log(red + "error" + reset)
-					console.log(error)
+					console.log(red + "error" + reset);
+					console.log(error);
 				};
 				process.exit();
 			});
