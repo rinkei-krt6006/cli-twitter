@@ -1,5 +1,5 @@
 #!/home/ubuntu/.nodebrew/current/bin/node
-
+let fs = require("fs")
 var util = require('util')
 var twitter = require('twitter')
 var readline = require("readline").createInterface({
@@ -7,13 +7,20 @@ var readline = require("readline").createInterface({
 	output: process.stdout
 });
 
-//api-key
-var key = new twitter({
-	consumer_key: '',
-	consumer_secret: '',
-	access_token_key: '',
-	access_token_secret: ''
-});
+let key = fs.readFileSync("key.txt","utf8")
+if(key===""){
+	console.log("https://apps.twitter.com/ からapi-keyを取得し,keyset.jsを使用してキーを登録してください。");
+	process.exit();
+}else{
+	key = key.split(",");
+	key = new twitter({
+		consumer_key: key[0],
+		consumer_secret: key[1],
+		access_token_key: key[2],
+		access_token_secret: key[3]
+	});
+};
+
 
 
 //文字色
