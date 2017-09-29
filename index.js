@@ -2,12 +2,15 @@
 const fs = require("fs");
 const util = require("util");
 const twitter = require("twitter");
+let path = require("path");
 const readline = require("readline").createInterface({
 	input: process.stdin,
 	output: process.stdout
 });
 
-let key = fs.readFileSync("key.txt", "utf8");
+let pathdata = process.argv[1];
+pathdata = path.dirname(pathdata);
+let key = fs.readFileSync(__dirname + "/key.txt", "utf8");
 if (key === "") {
 	console.log("https://apps.twitter.com/ からapi-keyを取得し,keyset.jsを使用してキーを登録してください。");
 	process.exit();
@@ -20,8 +23,6 @@ if (key === "") {
 		access_token_secret: key[3]
 	});
 };
-
-
 
 //文字色
 const black = '\u001b[30m';
