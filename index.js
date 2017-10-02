@@ -44,11 +44,13 @@ let mode = undefined;
 
 let shell = [];
 shell = process.argv;
+console.log(shell[2])
 switch (shell[2]) {
 	case "h":
 		//ヘルプ
 		console.log("h:ヘルプ\r\ntl:TLを流す\r\n一致しない場合:第二引数をツイート後即終了");
 		break;
+	case undefined :
 	case "tl":
 		//TLを流す
 		console.log(green + " #    #  " + cyan + "######  " + yellow + "#       " + red + " ####   " + white + " ####   " + magenta + "#    #  " + blue + "######" + reset);
@@ -84,111 +86,116 @@ switch (shell[2]) {
 		//↓TLモード内コマンド判定式------------------
 		readline.on('line', function (line) {
 
-			switch (mode) {
-				case "replynum":
-					mode = "replymsg";
-					replynum = line;
-					console.log("repry msg?");
-					break;
+			if (line === "q") {
+				mode = ""
+				console.log("cancel")
+			} else {
+				switch (mode) {
+					case "replynum":
+						mode = "replymsg";
+						replynum = line;
+						console.log("repry msg?");
+						break;
 
-				case "replymsg":
-					mode = undefined;
-					console.log(cyan + "send...")
-					key.post('statuses/update',
-						{ status: "@" + scname[replynum] + " " + line, in_reply_to_status_id: twiid[replynum] },
-						function (error, tweet, response) {
-							if (!error) {
-								//console.log(tweet);
-								console.log(green + "tweet success\r\n" + reset);
-							} else {
-								console.log(red + "tweet error\r\n" + reset);
-							};
-							replyid = "";
-						}
-					);
-					break;
-				case "rt":
-					//RT
-					mode = undefined;
-					key.post('statuses/retweet/' + twiid[line] + '.json',
-						function (error) {
-							if (!error) {
-								console.log(green + "\r\nRT success\r\n" + reset);
-							} else {
-								console.log(red + "\r\nRT error\r\n" + reset);
-							};
-						});
-					break;
-				case "fav":
-					//ふぁぼ
-					mode = undefined;
-					key.post('favorites/create.json?id=' + twiid[line] + "&include_entities=true",
-						function (error) {
-							if (!error) {
-								console.log(green + "\r\nFav success\r\n" + reset);
-							} else {
-								console.log(red + "\r\nFav error\r\n" + reset);
-							};
-						});
-					break;
-				case "copy":
-					//パクツイ
-					mode = "";
-					console.log(cyan + "send...");
-					key.post('statuses/update',
-						{ status: twitxt[line] },
-						function (error, tweet, response) {
-							if (!error) {
-								//console.log(tweet);
-								console.log(green + "tweet success\r\n" + reset);
-							} else {
-								console.log(red + "tweet error\r\n" + reset);
-							};
-						}
-					);
-					break;
-				default:
-					switch (line) {
-						case "h":
-							if (mode === undefined) {
-								console.log(" r=retweet \r\n f=Favorite \r\n c=copy \r\n m=reply(message)");
-							} else {
-								console.log("Number=No,*");
-							};
-							break;
-						case "r":
-							mode = "rt";
-							console.log("RT Number?");
-							break;
-						case "f":
-							mode = "fav";
-							console.log("Fav Number?");
-							break;
-						case "c":
-							mode = "copy";
-							console.log("Copy Number?");
-							break;
-						case "m":
-							mode = "replynum";
-							console.log("reply Number?");
-							break;
-						default:
-							console.log(cyan + "send...");
-							key.post('statuses/update',
-								{ status: line },
-								function (error, tweet, response) {
-									if (!error) {
-										//console.log(tweet);
-										console.log(green + "tweet success\r\n" + reset);
-									} else {
-										console.log(red + "tweet error\r\n" + reset);
-									};
-								}
-							);
-							break;
-					}//swich mode
-					break;
-			};//switch line
+					case "replymsg":
+						mode = undefined;
+						console.log(cyan + "send...")
+						key.post('statuses/update',
+							{ status: "@" + scname[replynum] + " " + line, in_reply_to_status_id: twiid[replynum] },
+							function (error, tweet, response) {
+								if (!error) {
+									//console.log(tweet);
+									console.log(green + "tweet success\r\n" + reset);
+								} else {
+									console.log(red + "tweet error\r\n" + reset);
+								};
+								replyid = "";
+							}
+						);
+						break;
+					case "rt":
+						//RT
+						mode = undefined;
+						key.post('statuses/retweet/' + twiid[line] + '.json',
+							function (error) {
+								if (!error) {
+									console.log(green + "\r\nRT success\r\n" + reset);
+								} else {
+									console.log(red + "\r\nRT error\r\n" + reset);
+								};
+							});
+						break;
+					case "fav":
+						//ふぁぼ
+						mode = undefined;
+						key.post('favorites/create.json?id=' + twiid[line] + "&include_entities=true",
+							function (error) {
+								if (!error) {
+									console.log(green + "\r\nFav success\r\n" + reset);
+								} else {
+									console.log(red + "\r\nFav error\r\n" + reset);
+								};
+							});
+						break;
+					case "copy":
+						//パクツイ
+						mode = "";
+						console.log(cyan + "send...");
+						key.post('statuses/update',
+							{ status: twitxt[line] },
+							function (error, tweet, response) {
+								if (!error) {
+									//console.log(tweet);
+									console.log(green + "tweet success\r\n" + reset);
+								} else {
+									console.log(red + "tweet error\r\n" + reset);
+								};
+							}
+						);
+						break;
+					default:
+						switch (line) {
+							case "h":
+								if (mode === undefined) {
+									console.log(" r=retweet \r\n f=Favorite \r\n c=copy \r\n m=reply(message) \r\n q=cancel");
+								} else {
+									console.log("Number=No,*");
+								};
+								break;
+							case "r":
+								mode = "rt";
+								console.log("RT Number?");
+								break;
+							case "f":
+								mode = "fav";
+								console.log("Fav Number?");
+								break;
+							case "c":
+								mode = "copy";
+								console.log("Copy Number?");
+								break;
+							case "m":
+								mode = "replynum";
+								console.log("reply Number?");
+								break;
+							default:
+								console.log(cyan + "send...");
+								key.post('statuses/update',
+									{ status: line },
+									function (error, tweet, response) {
+										if (!error) {
+											//console.log(tweet);
+											console.log(green + "tweet success\r\n" + reset);
+										} else {
+											console.log(red + "tweet error\r\n" + reset);
+										};
+									}
+								);
+								break;
+						}//swich mode
+						break;
+				};//switch line
+			}
 		});//入力
 		//↑TLモード内コマンド判定式----------------------------
 		break;
