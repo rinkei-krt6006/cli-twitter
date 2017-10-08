@@ -38,7 +38,8 @@ const reset = '\u001b[0m';
 let twinum = -1;
 let twiid = [];
 let twitxt = [];
-let scname = [];
+let twiname = [];
+let twiscname = [];
 let replynum = "";
 let mode = undefined;
 
@@ -50,7 +51,7 @@ switch (shell[2]) {
 		//ヘルプ
 		console.log("h:ヘルプ\r\ntl:TLを流す\r\n一致しない場合:第二引数をツイート後即終了");
 		break;
-	case undefined :
+	case undefined:
 	case "tl":
 		//TLを流す
 		console.log(green + " #    #  " + cyan + "######  " + yellow + "#       " + red + " ####   " + white + " ####   " + yellow + "#    #  " + blue + "######" + reset);
@@ -62,6 +63,7 @@ switch (shell[2]) {
 		console.log("\r\ntimeline mode\r\n");
 
 		key.stream('user', function (stream) {
+
 			stream.on("data", function (data) {
 
 				let tmp = data.source;
@@ -71,7 +73,9 @@ switch (shell[2]) {
 				twinum = twinum + 1;
 				twiid.push(data.id_str);
 				twitxt.push(data.text);
-				scname.push(data.user.screen_name);
+				twiname.push(data.user.name);
+				twiscname.push(data.user.screen_name);
+
 
 				let temp = "No." + twinum + "\r\n";
 				temp += cyan + data.user.name + " @" + data.user.screen_name + "\r\n";
@@ -81,6 +85,56 @@ switch (shell[2]) {
 
 				console.log(temp);
 			})
+
+			//ツイ消し通知
+			stream.on("delete", function (data) {
+				for (let i = twiid.length; i > 0; i--) {
+					if (twiid[i] === data.delete.status.id_str) {
+						let temp = ""
+						temp += red + "delete\r\n";
+						temp += twiname[i] + " " + twiscname[i] + "\r\n";
+						temp += twitxt[i] + reset + "\r\n";
+						console.log(temp);
+						break;
+					}
+				}
+			})
+			
+			stream.on("event", function (data) {
+				let temp = red				
+				switch (data.event) {
+					case "follow":
+						temp += "follow \r\n"
+						temp += data.source.name + "\r\n";
+						temp += "@" + data.source.screen_name + "\r\n" + reset
+						console.log(temp);
+						break;
+					case "favorite":
+						temp += "favorite" + "\r\n";
+						temp += "source\r\n"
+						temp += data.source.name +" @"+ data.source.screen_name + "\r\n";
+						temp += "target\r\n"
+						temp += data.target.name + " @" + data.target.screen_name + "\r\n";
+						temp += data.target_object.text + reset + "\r\n"
+						console.log(temp);
+						break;
+					case "unfavorite":
+					  temp += "unfavorite" + "\r\n";
+					  temp += "source\r\n"
+					  temp += data.source.name +" @"+ data.source.screen_name + "\r\n";
+					  temp += "target\r\n"
+					  temp += data.target.name + " @" + data.target.screen_name + "\r\n";
+					  temp += data.target_object.text + reset + "\r\n"
+						console.log(temp);
+						break;
+					default:
+						temp += "未知のイベントが検出されました。プログラムの機能拡充の為、以下のメッセージを開発者に伝えていただけると幸いです。\r\n\r\n"
+						temp += data + reset
+						console.log(temp);
+						break;
+				}	
+			})
+
 		});
 
 		//↓TLモード内コマンド判定式------------------
@@ -101,7 +155,7 @@ switch (shell[2]) {
 						mode = undefined;
 						console.log(cyan + "send...")
 						key.post('statuses/update',
-							{ status: "@" + scname[replynum] + " " + line, in_reply_to_status_id: twiid[replynum] },
+							{ status: "@" + twiscname[replynum] + " " + line, in_reply_to_status_id: twiid[replynum] },
 							function (error, tweet, response) {
 								if (!error) {
 									//console.log(tweet);
