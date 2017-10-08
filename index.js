@@ -53,12 +53,12 @@ switch (shell[2]) {
 	case undefined :
 	case "tl":
 		//TLを流す
-		console.log(green + " #    #  " + cyan + "######  " + yellow + "#       " + red + " ####   " + white + " ####   " + magenta + "#    #  " + blue + "######" + reset);
-		console.log(green + " #    #  " + cyan + "#       " + yellow + "#       " + red + "#    #  " + white + "#    #  " + magenta + "##  ##  " + blue + "#     " + reset);
-		console.log(green + " #    #  " + cyan + "#####   " + yellow + "#       " + red + "#       " + white + "#    #  " + magenta + "# ## #  " + blue + "##### " + reset);
-		console.log(green + " # ## #  " + cyan + "#       " + yellow + "#       " + red + "#       " + white + "#    #  " + magenta + "#    #  " + blue + "#     " + reset);
-		console.log(green + " ##  ##  " + cyan + "#       " + yellow + "#       " + red + "#    #  " + white + "#    #  " + magenta + "#    #  " + blue + "#     " + reset);
-		console.log(green + " #    #  " + cyan + "######  " + yellow + "######  " + red + " ####   " + white + " ####   " + magenta + "#    #  " + blue + "######" + reset);
+		console.log(green + " #    #  " + cyan + "######  " + yellow + "#       " + red + " ####   " + white + " ####   " + yellow + "#    #  " + blue + "######" + reset);
+		console.log(green + " #    #  " + cyan + "#       " + yellow + "#       " + red + "#    #  " + white + "#    #  " + yellow + "##  ##  " + blue + "#     " + reset);
+		console.log(green + " #    #  " + cyan + "#####   " + yellow + "#       " + red + "#       " + white + "#    #  " + yellow + "# ## #  " + blue + "##### " + reset);
+		console.log(green + " # ## #  " + cyan + "#       " + yellow + "#       " + red + "#       " + white + "#    #  " + yellow + "#    #  " + blue + "#     " + reset);
+		console.log(green + " ##  ##  " + cyan + "#       " + yellow + "#       " + red + "#    #  " + white + "#    #  " + yellow + "#    #  " + blue + "#     " + reset);
+		console.log(green + " #    #  " + cyan + "######  " + yellow + "######  " + red + " ####   " + white + " ####   " + yellow + "#    #  " + blue + "######" + reset);
 		console.log("\r\ntimeline mode\r\n");
 
 		key.stream('user', function (stream) {
@@ -74,9 +74,9 @@ switch (shell[2]) {
 				scname.push(data.user.screen_name);
 
 				let temp = "No." + twinum + "\r\n";
-				temp += magenta + data.user.name + " @" + data.user.screen_name + "\r\n";
+				temp += cyan + data.user.name + " @" + data.user.screen_name + "\r\n";
 				temp += white + data.text + "\r\n";
-				temp += blue + "via " + tmp + "\r\n";
+				temp += green + "via " + tmp + "\r\n";
 				temp += data.user.created_at + reset + "\r\n";
 
 				console.log(temp);
