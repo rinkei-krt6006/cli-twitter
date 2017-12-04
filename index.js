@@ -42,6 +42,7 @@ let twiname = [];
 let twiscname = [];
 let replynum = "";
 let mode = undefined;
+let mydata = undefined
 
 let shell = [];
 shell = process.argv;
@@ -62,6 +63,15 @@ switch (shell[2]) {
 		console.log(green + " #    #  " + cyan + "######  " + yellow + "######  " + red + " ####   " + white + " ####   " + yellow + "#    #  " + blue + "######" + reset);
 		console.log("\r\ntimeline mode\r\n");
 
+		key.get("account/verify_credentials",function (error,data){
+			mydata = data
+			console.log("認証アカウント")
+			console.log("@"+data.screen_name)
+			console.log(data.name)
+			console.log("\r\n")
+		})
+		
+
 		key.stream('user', function (stream) {
 
 			stream.on("data", function (data) {
@@ -76,6 +86,7 @@ switch (shell[2]) {
 				twiname.push(data.user.name);
 				twiscname.push(data.user.screen_name);
 
+				if(data.retweeted_status==undefined){
 
 				let temp = "No." + twinum + "\r\n";
 				temp += cyan + data.user.name + " @" + data.user.screen_name + "\r\n";
@@ -84,6 +95,33 @@ switch (shell[2]) {
 				temp += data.user.created_at + reset + "\r\n";
 
 				console.log(temp);
+
+				}else{
+
+					if(data.retweeted_status.user.screen_name==mydata.screen_name){
+						//被RT
+						
+					let temp = red + "被RT \r\nNo." + twinum + "\r\n";
+					temp += "RT by " + data.user.name + " @" + data.user.screen_name + "\r\n";
+					temp += data.retweeted_status.user.name + " @" + data.retweeted_status.user.screen_name + "\r\n";
+					temp +=  data.retweeted_status.text + "\r\n";
+					temp +=  "via " + tmp + "\r\n";
+					temp += data.retweeted_status.user.created_at + reset + "\r\n";
+	
+					console.log(temp);
+				}else{
+						//関係ないRT
+						let temp = "No." + twinum + "\r\n";
+						temp += "RT by " + data.user.name + " @" + data.user.screen_name + "\r\n";
+						temp += cyan + data.retweeted_status.user.name + " @" + data.retweeted_status.user.screen_name + "\r\n";
+						temp += white + data.retweeted_status.text + "\r\n";
+						temp += green + "via " + tmp + "\r\n";
+						temp += data.retweeted_status.user.created_at + reset + "\r\n";
+					console.log(temp);
+					
+					}
+
+				}
 			})
 
 			//ツイ消し通知
@@ -127,9 +165,17 @@ switch (shell[2]) {
 					  temp += data.target_object.text + reset + "\r\n"
 						console.log(temp);
 						break;
+					case "retweeted_retweet":
+						let temp = red + data.event + "\r\n"
+						temp += "RT by " + data.source.name + " @" + data.source.screen_name + "\r\n";
+						temp += data.target_object.entities.user_mentions[0].name + data.target_object.entities.user_mentions[0].screen_name + "\r\n";
+						temp += data.target_object.retweeted_status.text + "\r\n";
+						temp += reset + "\r\n";
+						console.log(temp);
+						break;
 					default:
 						temp += "未知のイベントが検出されました。プログラムの機能拡充の為、以下のメッセージを開発者に伝えていただけると幸いです。\r\n\r\n"
-						temp += data + reset
+						temp += data.event +"\r\n"+JSON.stringify(data)+ reset
 						console.log(temp);
 						break;
 				}	
