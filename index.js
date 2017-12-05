@@ -42,7 +42,7 @@ let twiname = [];
 let twiscname = [];
 let replynum = "";
 let mode = undefined;
-let mydata = undefined
+let mydata = ""
 
 let shell = [];
 shell = process.argv;
@@ -63,19 +63,22 @@ switch (shell[2]) {
 		console.log(green + " #    #  " + cyan + "######  " + yellow + "######  " + red + " ####   " + white + " ####   " + yellow + "#    #  " + blue + "######" + reset);
 		console.log("\r\ntimeline mode\r\n");
 
-		key.get("account/verify_credentials",function (error,data){
-			mydata = data
+		key.get("account/verify_credentials", function (error, data) {
+			mydata = JSON.stringify(data)
+			mydata = JSON.parse(mydata)
+			console.log(mydata)
+	
 			console.log("認証アカウント")
-			console.log("@"+data.screen_name)
-			console.log(data.name)
+			console.log("@" + mydata.screen_name)
+			console.log(mydata.name)
 			console.log("\r\n")
+
 		})
 		
-
 		key.stream('user', function (stream) {
 
 			stream.on("data", function (data) {
-
+		
 				let tmp = data.source;
 				tmp = tmp.split('">');
 				tmp = tmp[1].split('</a>');
@@ -86,30 +89,39 @@ switch (shell[2]) {
 				twiname.push(data.user.name);
 				twiscname.push(data.user.screen_name);
 
-				if(data.retweeted_status==undefined){
-
-				let temp = "No." + twinum + "\r\n";
-				temp += cyan + data.user.name + " @" + data.user.screen_name + "\r\n";
-				temp += white + data.text + "\r\n";
-				temp += green + "via " + tmp + "\r\n";
-				temp += data.user.created_at + reset + "\r\n";
-
-				console.log(temp);
-
+				if(data.in_reply_to_screen_name == mydata.screen_name){
+					//被リプ
+					let temp = red +"reply\r\n"+"No." + twinum + "\r\n";
+					temp += cyan + data.user.name + " @" + data.user.screen_name + "\r\n";
+					temp += white + data.text + "\r\n";
+					temp += green + "via " + tmp + "\r\n";
+					temp += data.user.created_at + reset + "\r\n";
+					console.log(temp)
 				}else{
+				if (data.retweeted_status == undefined) {
+					//ノーマルツイート
+					let temp = "No." + twinum + "\r\n";
+					temp += cyan + data.user.name + " @" + data.user.screen_name + "\r\n";
+					temp += white + data.text + "\r\n";
+					temp += green + "via " + tmp + "\r\n";
+					temp += data.user.created_at + reset + "\r\n";
 
-					if(data.retweeted_status.user.screen_name==mydata.screen_name){
-						//被RT
-						
-					let temp = red + "被RT \r\nNo." + twinum + "\r\n";
-					temp += "RT by " + data.user.name + " @" + data.user.screen_name + "\r\n";
-					temp += data.retweeted_status.user.name + " @" + data.retweeted_status.user.screen_name + "\r\n";
-					temp +=  data.retweeted_status.text + "\r\n";
-					temp +=  "via " + tmp + "\r\n";
-					temp += data.retweeted_status.user.created_at + reset + "\r\n";
-	
 					console.log(temp);
-				}else{
+
+				} else {
+
+					if (data.retweeted_status.user.screen_name == mydata.screen_name) {
+						//被RT
+
+						let temp = red + "被RT \r\nNo." + twinum + "\r\n";
+						temp += "RT by " + data.user.name + " @" + data.user.screen_name + "\r\n";
+						temp += data.retweeted_status.user.name + " @" + data.retweeted_status.user.screen_name + "\r\n";
+						temp += data.retweeted_status.text + "\r\n";
+						temp += "via " + tmp + "\r\n";
+						temp += data.retweeted_status.user.created_at + reset + "\r\n";
+
+						console.log(temp);
+					} else {
 						//関係ないRT
 						let temp = "No." + twinum + "\r\n";
 						temp += "RT by " + data.user.name + " @" + data.user.screen_name + "\r\n";
@@ -117,11 +129,12 @@ switch (shell[2]) {
 						temp += white + data.retweeted_status.text + "\r\n";
 						temp += green + "via " + tmp + "\r\n";
 						temp += data.retweeted_status.user.created_at + reset + "\r\n";
-					console.log(temp);
-					
+						console.log(temp);
+
 					}
 
 				}
+			}
 			})
 
 			//ツイ消し通知
@@ -137,9 +150,9 @@ switch (shell[2]) {
 					}
 				}
 			})
-			
+
 			stream.on("event", function (data) {
-				let temp = red				
+				let temp = red
 				switch (data.event) {
 					case "follow":
 						temp += "follow \r\n"
@@ -150,19 +163,19 @@ switch (shell[2]) {
 					case "favorite":
 						temp += "favorite" + "\r\n";
 						temp += "source\r\n"
-						temp += data.source.name +" @"+ data.source.screen_name + "\r\n";
+						temp += data.source.name + " @" + data.source.screen_name + "\r\n";
 						temp += "target\r\n"
 						temp += data.target.name + " @" + data.target.screen_name + "\r\n";
 						temp += data.target_object.text + reset + "\r\n"
 						console.log(temp);
 						break;
 					case "unfavorite":
-					  temp += "unfavorite" + "\r\n";
-					  temp += "source\r\n"
-					  temp += data.source.name +" @"+ data.source.screen_name + "\r\n";
-					  temp += "target\r\n"
-					  temp += data.target.name + " @" + data.target.screen_name + "\r\n";
-					  temp += data.target_object.text + reset + "\r\n"
+						temp += "unfavorite" + "\r\n";
+						temp += "source\r\n"
+						temp += data.source.name + " @" + data.source.screen_name + "\r\n";
+						temp += "target\r\n"
+						temp += data.target.name + " @" + data.target.screen_name + "\r\n";
+						temp += data.target_object.text + reset + "\r\n"
 						console.log(temp);
 						break;
 					case "retweeted_retweet":
@@ -175,10 +188,10 @@ switch (shell[2]) {
 						break;
 					default:
 						temp += "未知のイベントが検出されました。プログラムの機能拡充の為、以下のメッセージを開発者に伝えていただけると幸いです。\r\n\r\n"
-						temp += data.event +"\r\n"+JSON.stringify(data)+ reset
+						temp += data.event + "\r\n" + JSON.stringify(data) + reset
 						console.log(temp);
 						break;
-				}	
+				}
 			})
 
 		});
