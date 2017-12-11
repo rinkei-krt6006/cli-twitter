@@ -10,19 +10,21 @@ const readline = require("readline").createInterface({
 
 let pathdata = process.argv[1];
 pathdata = path.dirname(pathdata);
-let key = fs.readFileSync(__dirname + "/key.txt", "utf8");
-if (key === "") {
-	console.log("https://apps.twitter.com/ からapi-keyを取得し,keyset.jsを使用してキーを登録してください。");
-	process.exit();
-} else {
+let key
+try {
+	key = fs.readFileSync(__dirname + "/key.txt", "utf8");	
 	key = key.split(",");
 	key = new twitter({
 		consumer_key: key[0],
 		consumer_secret: key[1],
 		access_token_key: key[2],
 		access_token_secret: key[3]
-	});
-};
+	})
+} catch (error) {
+	console.log("https://apps.twitter.com/ からapi-keyを取得し,keyset.jsを使用してキーを登録してください。");
+	process.exit();
+}
+
 
 //文字色
 const black = '\u001b[30m';
@@ -66,7 +68,7 @@ switch (shell[2]) {
 		key.get("account/verify_credentials", function (error, data) {
 			mydata = JSON.stringify(data)
 			mydata = JSON.parse(mydata)
-			console.log(mydata)
+			//console.log(mydata)
 	
 			console.log("認証アカウント")
 			console.log("@" + mydata.screen_name)
