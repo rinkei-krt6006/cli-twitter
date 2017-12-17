@@ -7,20 +7,20 @@ const readline = require("readline").createInterface({
 	input: process.stdin,
 	output: process.stdout
 });
+require('dotenv').config();
 
 let pathdata = process.argv[1];
 pathdata = path.dirname(pathdata);
-let key = fs.readFileSync(__dirname + "/key.txt", "utf8");
-if (key === "") {
-	console.log("https://apps.twitter.com/ からapi-keyを取得し,keyset.jsを使用してキーを登録してください。");
+
+if (process.env.consumer_key === undefined) {
+	console.log("https://apps.twitter.com/ からapi-keyを取得し,.env_sampleを使用してキーを登録してください。");
 	process.exit();
 } else {
-	key = key.split(",");
 	key = new twitter({
-		consumer_key: key[0],
-		consumer_secret: key[1],
-		access_token_key: key[2],
-		access_token_secret: key[3]
+		consumer_key: process.env.consumer_key,
+		consumer_secret: process.env.consumer_secret,
+		access_token_key: process.env.access_token_key,
+		access_token_secret: process.env.access_token_secret
 	});
 };
 
