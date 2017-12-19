@@ -1,7 +1,7 @@
 ﻿このプログラムはコンソール上でTwitterの基本機能を利用できるtwitterクライアントです。
 nodejsを利用して動作させてください。
 
-初めにapiキーを各自取得していただき、4つのキーをkeyset.jsを使用して登録します。
+初めにapiキーを各自取得していただき、4つのキーを.env_sample.jsonを使用して登録します。
 https://apps.twitter.com/
 
 使い方
