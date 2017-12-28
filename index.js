@@ -77,7 +77,18 @@ switch (shell[2]) {
 		key.stream('user', function (stream) {
 
 			stream.on("data", function (data) {
-		
+				if (!!data.direct_message) {
+					//DM
+					if (data.direct_message.sender.id_str === mydata.id_str) {
+						//自分が送信したもの
+					} else {
+						//送られてきたもの
+						console.log("direct_message")
+						console.log(data.direct_message.sender.name+" @"+data.direct_message.sender.screen_name)
+						console.log(data.direct_message.text)
+						console.log("\r\n")
+					}
+				} else {
 				let tmp = data.source;
 				tmp = tmp.split('">');
 				tmp = tmp[1].split('</a>');
@@ -134,6 +145,7 @@ switch (shell[2]) {
 
 				}
 			}
+		}
 			})
 
 			//ツイ消し通知
