@@ -1,4 +1,3 @@
-#!/home/ubuntu/.nodebrew/current/bin/node
 const fs = require("fs");
 const util = require("util");
 const twitter = require("twitter");
